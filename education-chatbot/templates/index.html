@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDUCATION BOT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fff7e6;
+  --bg2: #ffedc7;
+  --panel: #fffdf8;
+  --panel2: #fff4dc;
+  --text: #33260f;
+  --muted: #8a7550;
+  --accent: #5b4bdb;
+  --accent2: #ec4899;
+  --on-accent: #ffffff;
+  --border: #f0dcae;
+  --user: #5b4bdb;
+  --on-user: #ffffff;
+  --radius: 26px;
+  --font: 'Nunito', 'Segoe UI', sans-serif;
+  --shadow: 0 14px 36px rgba(140,100,20,0.16);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: radial-gradient(circle at 10% 15%, #ffe9b8 0, transparent 38%), radial-gradient(circle at 92% 85%, #fbd3ea 0, transparent 38%), #fff7e6;
+  overflow: hidden;
+}
+.app {
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+.layout-side .app { grid-template-columns: 300px 1fr; }
+.layout-top .app { grid-template-rows: auto 1fr; }
+.side {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  display: flex;
+  gap: 18px;
+  overflow: hidden;
+}
+.layout-side .side { flex-direction: column; }
+.layout-top .side { flex-direction: row; align-items: center; padding: 14px 20px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo {
+  width: 52px; height: 52px; flex: none;
+  display: grid; place-items: center;
+  font-size: 26px;
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: calc(var(--radius) * 0.7);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+.brand h1 { font-size: 20px; letter-spacing: 0.5px; line-height: 1.15; }
+.brand p { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+.roles-title {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+}
+.roles { display: flex; flex-wrap: wrap; gap: 8px; }
+.layout-top .roles-wrap { display: none; }
+.layout-top .brand { flex: none; }
+.layout-top .top-roles { display: flex; }
+.top-roles { display: none; gap: 8px; margin-left: auto; overflow-x: auto; }
+.chip {
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s, background 0.2s, border-color 0.2s;
+}
+.chip:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  background: var(--bg2);
+}
+.badge {
+  margin-top: auto;
+  font-size: 12px;
+  color: var(--muted);
+  border-left: 3px solid var(--accent);
+  padding: 8px 12px;
+  background: var(--panel2);
+  border-radius: 0 10px 10px 0;
+  line-height: 1.5;
+}
+.layout-top .badge { display: none; }
+.chat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.chat-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, var(--panel2), transparent);
+}
+.status { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
+.dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(128, 128, 128, 0.5); }
+  70% { box-shadow: 0 0 0 9px rgba(128, 128, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(128, 128, 128, 0); }
+}
+.clear {
+  font-family: inherit; font-size: 12.5px;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.clear:hover { color: var(--text); border-color: var(--accent); }
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scroll-behavior: smooth;
+}
+.messages::-webkit-scrollbar { width: 8px; }
+.messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+.welcome {
+  margin: auto;
+  text-align: center;
+  max-width: 560px;
+  animation: rise 0.6s ease both;
+}
+.welcome .big {
+  width: 84px; height: 84px; margin: 0 auto 18px;
+  display: grid; place-items: center; font-size: 42px;
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.25);
+}
+.welcome h2 { font-size: 26px; margin-bottom: 8px; }
+.welcome p { color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+.starters {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-top: 22px;
+}
+.starter {
+  text-align: left;
+  font-family: inherit; font-size: 13.5px; line-height: 1.45;
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.7);
+  padding: 13px 15px;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.2s;
+}
+.starter:hover { transform: translateY(-3px); border-color: var(--accent); }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.msg { display: flex; gap: 12px; max-width: 86%; animation: rise 0.3s ease both; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.avatar {
+  width: 36px; height: 36px; flex: none;
+  display: grid; place-items: center; font-size: 18px;
+  border-radius: 50%;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+}
+.msg.bot .avatar {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--on-accent);
+  border: none;
+}
+.bubble {
+  padding: 13px 17px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  border-radius: var(--radius);
+  overflow-wrap: anywhere;
+}
+.msg.bot .bubble {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-top-left-radius: 4px;
+}
+.msg.user .bubble {
+  background: var(--user);
+  color: var(--on-user);
+  border-top-right-radius: 4px;
+  white-space: pre-wrap;
+}
+.msg.error .bubble { border-color: #ef4444; color: #ef4444; }
+.bubble p { margin-bottom: 9px; }
+.bubble p:last-child, .bubble ul:last-child, .bubble ol:last-child { margin-bottom: 0; }
+.bubble h3, .bubble h4 { margin: 12px 0 6px; color: var(--accent); font-size: 15px; }
+.bubble ul, .bubble ol { margin: 0 0 9px 22px; }
+.bubble li { margin-bottom: 4px; }
+.bubble code {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 13px;
+  background: rgba(127, 127, 127, 0.18);
+  padding: 2px 6px; border-radius: 6px;
+}
+.bubble pre {
+  background: rgba(0, 0, 0, 0.35);
+  color: #e5e7eb;
+  padding: 13px; border-radius: 12px;
+  overflow-x: auto; margin: 8px 0;
+}
+.bubble pre code { background: none; padding: 0; color: inherit; }
+.typing { display: flex; gap: 5px; padding: 6px 2px; }
+.typing span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  animation: bounce 1.2s infinite ease-in-out;
+}
+.typing span:nth-child(2) { animation-delay: 0.15s; }
+.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-7px); opacity: 1; }
+}
+.composer {
+  padding: 14px 18px 18px;
+  border-top: 1px solid var(--border);
+}
+.box {
+  display: flex; align-items: flex-end; gap: 10px;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 1.1);
+  padding: 8px 8px 8px 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(128, 128, 128, 0.18);
+}
+textarea {
+  flex: 1; resize: none; border: none; outline: none;
+  background: transparent; color: var(--text);
+  font-family: inherit; font-size: 14.5px; line-height: 1.5;
+  max-height: 140px; padding: 8px 0;
+}
+textarea::placeholder { color: var(--muted); }
+.send {
+  width: 44px; height: 44px; flex: none;
+  border: none; cursor: pointer;
+  font-size: 18px;
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  transition: transform 0.15s, opacity 0.2s;
+}
+.send:hover { transform: scale(1.08); }
+.send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.hint { margin-top: 8px; text-align: center; font-size: 11.5px; color: var(--muted); }
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  .layout-side .app, .layout-top .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 10px; gap: 10px; }
+  .side { flex-direction: row !important; align-items: center; padding: 12px 14px; }
+  .roles-wrap, .badge { display: none; }
+  .top-roles { display: none !important; }
+  .msg { max-width: 96%; }
+  .starters { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body class="layout-side">
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">🎓</div>
+      <div>
+        <h1>EDUCATION BOT</h1>
+        <p>Teacher, Lecturer & Trainer study room</p>
+      </div>
+    </div>
+    <div class="roles-wrap">
+      <div class="roles-title">Study tracks</div>
+      <div class="roles" id="roles"></div>
+    </div>
+    <div class="top-roles" id="topRoles"></div>
+    <div class="badge">Study-only assistant. Questions outside Education will not be answered.</div>
+  </aside>
+
+  <main class="chat">
+    <div class="chat-head">
+      <div class="status"><span class="dot"></span><span>EDUCATION BOT is online</span></div>
+      <button class="clear" id="clearBtn" type="button">New chat</button>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="composer">
+      <div class="box">
+        <textarea id="input" rows="1" placeholder="Ask a Education study question..."></textarea>
+        <button class="send" id="sendBtn" type="button" aria-label="Send">&#10148;</button>
+      </div>
+      <div class="hint">Press Enter to send &middot; Shift + Enter for a new line</div>
+    </div>
+  </main>
+</div>
+
+<script>
+const CONFIG = {
+  icon: "🎓",
+  title: "EDUCATION BOT",
+  domain: "Education",
+  roles: ["Teacher", "Lecturer", "Trainer"],
+  starters: ["Explain Bloom's taxonomy with classroom examples", "Difference between formative and summative assessment", "Give me 5 CTET child development questions", "How do I design a good lesson plan?"]
+};
+
+const messagesEl = document.getElementById("messages");
+const inputEl = document.getElementById("input");
+const sendBtn = document.getElementById("sendBtn");
+const clearBtn = document.getElementById("clearBtn");
+let history = [];
+let busy = false;
+
+function escapeHtml(text) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function inlineFormat(text) {
+  return text
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*([^*\s][^*]*)\*/g, "<em>$1</em>");
+}
+
+function renderMarkdown(text) {
+  const lines = escapeHtml(text).split("\n");
+  let html = "";
+  let listType = null;
+  let inCode = false;
+  let codeLines = [];
+
+  function closeList() {
+    if (listType) {
+      html += "</" + listType + ">";
+      listType = null;
+    }
+  }
+
+  for (const line of lines) {
+    if (line.trim().startsWith("```")) {
+      if (inCode) {
+        html += "<pre><code>" + codeLines.join("\n") + "</code></pre>";
+        codeLines = [];
+        inCode = false;
+      } else {
+        closeList();
+        inCode = true;
+      }
+      continue;
+    }
+    if (inCode) {
+      codeLines.push(line);
+      continue;
+    }
+    const heading = line.match(/^#{1,6}\s+(.*)$/);
+    const bullet = line.match(/^\s*[-*]\s+(.*)$/);
+    const numbered = line.match(/^\s*\d+[.)]\s+(.*)$/);
+    if (heading) {
+      closeList();
+      html += "<h3>" + inlineFormat(heading[1]) + "</h3>";
+    } else if (bullet) {
+      if (listType !== "ul") {
+        closeList();
+        html += "<ul>";
+        listType = "ul";
+      }
+      html += "<li>" + inlineFormat(bullet[1]) + "</li>";
+    } else if (numbered) {
+      if (listType !== "ol") {
+        closeList();
+        html += "<ol>";
+        listType = "ol";
+      }
+      html += "<li>" + inlineFormat(numbered[1]) + "</li>";
+    } else if (line.trim() === "") {
+      closeList();
+    } else {
+      closeList();
+      html += "<p>" + inlineFormat(line) + "</p>";
+    }
+  }
+  if (inCode) {
+    html += "<pre><code>" + codeLines.join("\n") + "</code></pre>";
+  }
+  closeList();
+  return html;
+}
+
+function scrollDown() {
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function showWelcome() {
+  messagesEl.innerHTML = "";
+  const wrap = document.createElement("div");
+  wrap.className = "welcome";
+  wrap.innerHTML =
+    '<div class="big">' + CONFIG.icon + "</div>" +
+    "<h2>Welcome to " + CONFIG.title + "</h2>" +
+    "<p>Your study partner for " + CONFIG.domain +
+    ". Ask about concepts, exam preparation, interview questions or request a practice quiz.</p>";
+  const grid = document.createElement("div");
+  grid.className = "starters";
+  CONFIG.starters.forEach(function (text) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "starter";
+    btn.textContent = text;
+    btn.addEventListener("click", function () { send(text); });
+    grid.appendChild(btn);
+  });
+  wrap.appendChild(grid);
+  messagesEl.appendChild(wrap);
+}
+
+function removeWelcome() {
+  const welcome = messagesEl.querySelector(".welcome");
+  if (welcome) welcome.remove();
+}
+
+function addMessage(role, text, isError) {
+  const row = document.createElement("div");
+  row.className = "msg " + role + (isError ? " error" : "");
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = role === "user" ? "\u{1F464}" : CONFIG.icon;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  if (role === "user") {
+    bubble.textContent = text;
+  } else {
+    bubble.innerHTML = renderMarkdown(text);
+  }
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  messagesEl.appendChild(row);
+  scrollDown();
+  return row;
+}
+
+function addTyping() {
+  const row = document.createElement("div");
+  row.className = "msg bot";
+  row.innerHTML =
+    '<div class="avatar">' + CONFIG.icon + "</div>" +
+    '<div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  messagesEl.appendChild(row);
+  scrollDown();
+  return row;
+}
+
+async function send(preset) {
+  const text = (preset || inputEl.value).trim();
+  if (!text || busy) return;
+  busy = true;
+  sendBtn.disabled = true;
+  removeWelcome();
+  addMessage("user", text, false);
+  inputEl.value = "";
+  inputEl.style.height = "auto";
+  const typing = addTyping();
+
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, history: history })
+    });
+    const data = await response.json();
+    typing.remove();
+    if (!response.ok || data.error) {
+      addMessage("bot", data.error || "Something went wrong.", true);
+    } else {
+      addMessage("bot", data.reply, false);
+      history.push({ role: "user", text: text });
+      history.push({ role: "model", text: data.reply });
+    }
+  } catch (error) {
+    typing.remove();
+    addMessage("bot", "Network error. Please check your connection and try again.", true);
+  }
+  busy = false;
+  sendBtn.disabled = false;
+  inputEl.focus();
+}
+
+function buildRoles() {
+  ["roles", "topRoles"].forEach(function (id) {
+    const holder = document.getElementById(id);
+    CONFIG.roles.forEach(function (role) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = role;
+      chip.addEventListener("click", function () {
+        send("Give me a study roadmap and key topics for " + role + ".");
+      });
+      holder.appendChild(chip);
+    });
+  });
+}
+
+inputEl.addEventListener("input", function () {
+  inputEl.style.height = "auto";
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + "px";
+});
+
+inputEl.addEventListener("keydown", function (event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    send();
+  }
+});
+
+sendBtn.addEventListener("click", function () { send(); });
+
+clearBtn.addEventListener("click", function () {
+  history = [];
+  showWelcome();
+});
+
+buildRoles();
+showWelcome();
+</script>
+</body>
+</html>
